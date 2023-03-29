@@ -5,7 +5,7 @@ import "@openzeppelin/contracts@4.8.2/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts@4.8.2/access/Ownable.sol";
 
 contract VineToken is ERC721, Ownable {
-    uint256 public mintPrice = 0.05 ether; //50000000000000000 Wei
+    uint256 public mintPrice = 0.05 ether; //50000000000000000 Wei = 0.05
     uint256 public totalSupply; 
     uint256 public maxSupply;
     bool public isMintEnabled; 
@@ -34,4 +34,10 @@ contract VineToken is ERC721, Ownable {
         uint256 tokenID = totalSupply;
         _safeMint(msg.sender, tokenID);
     }
+
+    function burn(uint256 tokenId) public {
+        super._burn(tokenId);
+        mintedWallets[msg.sender]--;
+    }
+    
 }
