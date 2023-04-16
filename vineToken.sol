@@ -36,6 +36,7 @@ contract VineToken is ERC721, Ownable {
     }
 
     function burn(uint256 tokenId) public {
+        require(_isApprovedOrOwner(_msgSender(), tokenId), "caller is not owner nor approved");
         super._burn(tokenId);
         mintedWallets[msg.sender]--;
     }
