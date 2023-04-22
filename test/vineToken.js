@@ -39,13 +39,13 @@ describe('VineToken', function () {
     expect(await vineToken.isMintEnabled()).to.be.false;
   });
 
-  beforeEach(async function () {
-    VineToken = await ethers.getContractFactory('VineToken');
-    vineToken = await VineToken.deploy();
-    await vineToken.deployed();
-
-    [owner] = await ethers.getSigners();
-  });
+  // beforeEach(async function () {
+  //   VineToken = await ethers.getContractFactory('VineToken');
+  //   vineToken = await VineToken.deploy();
+  //   await vineToken.deployed();
+  //
+  //   [owner] = await ethers.getSigners();
+  // });
 
   it('should set the max supply when called by owner', async function () {
     // check that maxSupply is initially 2
@@ -66,6 +66,29 @@ describe('VineToken', function () {
     expect(await vineToken.maxSupply()).to.equal(2);
   });
 
+  //mint function test
+  const mintPrice = ethers.utils.parseEther("0.1");
+  const maxSupply = 2;
+
+  beforeEach(async function () {
+    [owner] = await ethers.getSigners();
+
+    VineToken = await ethers.getContractFactory("VineToken");
+    vineToken = await VineToken.deploy();
+    await vineToken.deployed();
+  });
+
+  it("should toggle isMintEnabled when called by owner", async function () {
+    expect(await vineToken.isMintEnabled()).to.be.true;
+
+    await vineToken.connect(owner).toggleMinting();
+
+    expect(await vineToken.isMintEnabled()).to.be.false;
+
+    await vineToken.connect(owner).toggleMinting();
+
+    expect(await vineToken.isMintEnabled()).to.be.true;
+  });
 
 
 
