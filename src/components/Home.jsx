@@ -56,7 +56,7 @@ function NFTImage({ tokenId, getCount }) {
 
   const [isMinted, setIsMinted] = useState(false);
   useEffect(() => {
-    getMintedStatus();
+    // getMintedStatus();
   }, [isMinted]);
 
   const getMintedStatus = async () => {
@@ -68,18 +68,17 @@ function NFTImage({ tokenId, getCount }) {
   const mintToken = async () => {
     const connection = contract.connect(signer);
     const addr = connection.address;
-    const result = await contract.payToMint(addr, metadataURI, {
-      value: ethers.utils.parseEther('0.05'),
-    });
-
+    const result = await contract.mint();
+    console.log(result);
+    console.log(addr);
     await result.wait();
-    getMintedStatus();
-    getCount();
+    // getMintedStatus();
+    // getCount();
   };
 
   async function getURI() {
-    const uri = await contract.tokenURI(tokenId);
-    alert(uri);
+    // const uri = await contract.tokenURI(tokenId);
+    // alert(uri);
   }
   // src={isMinted ? imageURI : 'img/placeholder.png'}
   return (
