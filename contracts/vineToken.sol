@@ -26,9 +26,8 @@ contract VineToken is ERC721, Ownable, ERC721Burnable {
     function count() public view returns (uint256) {
         return totalSupply;
     }
-
-    function mint() external payable {
-//        require(isMintEnabled, 'minting not enabled');
+    function mint() external payable returns (uint256){
+        //        require(isMintEnabled, 'minting not enabled');
         require(mintedWallets[msg.sender] < 1, 'exceeds max per wallet');
         require(msg.value == mintPrice, 'wrong value');
         require(maxSupply > totalSupply, 'sold out');
@@ -37,6 +36,8 @@ contract VineToken is ERC721, Ownable, ERC721Burnable {
         totalSupply++;
         uint256 tokenID = totalSupply;
         _safeMint(msg.sender, tokenID);
+
+        return tokenID;
     }
 
 }
