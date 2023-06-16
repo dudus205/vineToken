@@ -13,7 +13,7 @@ contract VineToken is ERC721, Ownable, ERC721Burnable {
     mapping(address => uint256) public mintedWallets;
 
     constructor() ERC721("vineToken", "VIN") {
-        maxSupply = 2;
+        maxSupply = 3;
     }
 
     function toggleIsMintEnabled() external onlyOwner{
@@ -25,6 +25,9 @@ contract VineToken is ERC721, Ownable, ERC721Burnable {
     }
     function count() public view returns (uint256) {
         return totalSupply;
+    }
+    function returnMaxSupply() public view returns (uint256) {
+        return maxSupply;
     }
     function mint() external payable returns (uint256){
         //        require(isMintEnabled, 'minting not enabled');

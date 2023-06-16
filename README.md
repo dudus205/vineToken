@@ -12,7 +12,7 @@ npx hardhat node
 npx hardhat run scripts/deploy.js
 
 1. npx hardhat node
-2. node .\scripts\deploy.js
+2. npx hardhat run scripts/deploy.js --network localhost
 3. npm run dev
 
 

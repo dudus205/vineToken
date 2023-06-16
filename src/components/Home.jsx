@@ -13,10 +13,7 @@ const signer = provider.getSigner();
 
 // get the smart contract
 const contract = new ethers.Contract(contractAddress, VineToken.abi, signer);
-
-let totalMinted = 0
-let tokens = [0,1,2,3]
-
+const maxSupply = 3;
 
 function Home() {
 
@@ -31,6 +28,7 @@ function Home() {
         setTotalMinted(parseInt(count));
     };
 
+
     return (
         <div>
             <WalletBalance />
@@ -38,8 +36,9 @@ function Home() {
             <h1>Vinery NFT Collection</h1>
             <div className="container">
                 <div className="row">
-                    {Array(totalMinted + 1)
+                    {Array(totalMinted +1)
                         .fill(0)
+                        .slice(0, maxSupply)
                         .map((_, i) => (
                             <div key={i} className="col-sm">
                                 <NFTImage tokenId={i} getCount={getCount} />
@@ -59,14 +58,8 @@ function NFTImage({ tokenId, getCount }) {
 
     const [isMinted, setIsMinted] = useState(false);
     useEffect(() => {
-        getMintedStatus();
+        // getMintedStatus();
     }, [isMinted]);
-
-    const getMintedStatus = async () => {
-        // const result = await contract.isContentOwned(metadataURI);
-        // console.log(result)
-        // setIsMinted(result);
-    };
 
     const mintToken = async () => {
         const connection = contract.connect(signer);
@@ -75,15 +68,16 @@ function NFTImage({ tokenId, getCount }) {
             value: ethers.utils.parseEther('0.5'),
         });
 
-        await result.wait();
-
-        // getMintedStatus();
+        const response = await result.wait();
+        // console.log(response)
+        // getMintedStatus(tokenId);
         getCount();
+        setIsMinted(tokenId);
+
     };
 
-    async function getURI() {
-        // const uri = await contract.tokenURI(tokenId);
-        // alert(uri);
+    async function getID() {
+        alert("Token #" + tokenId + " was taken! Vine was bought!")
     }
     return (
         <div className="card" style={{ width: '18rem' }}>
@@ -95,8 +89,8 @@ function NFTImage({ tokenId, getCount }) {
                         Mint
                     </button>
                 ) : (
-                    <button className="btn btn-secondary" onClick={getURI}>
-                        Taken! Show URI
+                    <button className="btn btn-secondary" onClick={getID}>
+                        Taken!
                     </button>
                 )}
             </div>
