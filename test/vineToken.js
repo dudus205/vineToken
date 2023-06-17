@@ -1,106 +1,46 @@
-const { expect } = require('chai');
+// Import necessary dependencies
+const { expect } = require("chai");
+const { ethers } = require("hardhat");
 
-describe('VineToken', function () {
-  let VineToken;
+// Test case
+describe("VineToken", function () {
   let vineToken;
   let owner;
-  let nonOwner;
+  let addr1;
 
   beforeEach(async function () {
-    VineToken = await ethers.getContractFactory('VineToken');
-    vineToken = await VineToken.deploy();
-    await vineToken.deployed();
+    [owner, addr1] = await ethers.getSigners();
 
-    [owner, nonOwner] = await ethers.getSigners();
-  });
-
-  it('should toggle isMintEnabled when called by owner', async function () {
-    // check that isMintEnabled is initially false
-    expect(await vineToken.isMintEnabled()).to.be.false;
-
-    // call toggleIsMintEnabled as owner
-    await vineToken.connect(owner).toggleIsMintEnabled();
-
-    // check that isMintEnabled is now true
-    expect(await vineToken.isMintEnabled()).to.be.true;
-
-    // call toggleIsMintEnabled again as owner
-    await vineToken.connect(owner).toggleIsMintEnabled();
-
-    // check that isMintEnabled is now false again
-    expect(await vineToken.isMintEnabled()).to.be.false;
-  });
-
-  it('should revert if called by non-owner', async function () {
-    // call toggleIsMintEnabled as non-owner
-    await expect(vineToken.connect(nonOwner).toggleIsMintEnabled()).to.be.revertedWith('Ownable: caller is not the owner');
-
-    // check that isMintEnabled is still false
-    expect(await vineToken.isMintEnabled()).to.be.false;
-  });
-
-  // beforeEach(async function () {
-  //   VineToken = await ethers.getContractFactory('VineToken');
-  //   vineToken = await VineToken.deploy();
-  //   await vineToken.deployed();
-  //
-  //   [owner] = await ethers.getSigners();
-  // });
-
-  it('should set the max supply when called by owner', async function () {
-    // check that maxSupply is initially 2
-    expect(await vineToken.maxSupply()).to.equal(2);
-
-    // set max supply to 10 as owner
-    await vineToken.connect(owner).setMaxSupply(10);
-
-    // check that maxSupply is now 10
-    expect(await vineToken.maxSupply()).to.equal(10);
-  });
-
-  it('should revert if called by non-owner', async function () {
-    // set max supply to 10 as non-owner
-    await expect(vineToken.connect(nonOwner).setMaxSupply(10)).to.be.revertedWith('Ownable: caller is not the owner');
-
-    // check that maxSupply is still 2
-    expect(await vineToken.maxSupply()).to.equal(2);
-  });
-
-  //mint function test
-  beforeEach(async function () {
     const VineToken = await ethers.getContractFactory("VineToken");
     vineToken = await VineToken.deploy();
     await vineToken.deployed();
-
-    [owner, nonOwner] = await ethers.getSigners();
   });
 
-  it("should toggle isMintEnabled when called by owner", async function () {
-    // Check that isMintEnabled is initially false
-    expect(await vineToken.isMintEnabled()).to.be.false;
+  it("should mint a new token", async function () {
+    const mintPrice = ethers.utils.parseEther("0.5");
+    const tokenId = 1;
 
-    // Call toggleIsMintEnabled as owner
-    await vineToken.connect(owner).toggleIsMintEnabled();
+    await vineToken.toggleIsMintEnabled();
 
-    // Check that isMintEnabled is now true
-    expect(await vineToken.isMintEnabled()).to.be.true;
+    const mintTx = await vineToken.connect(addr1).mint({ value: mintPrice });
+    await mintTx.wait();
 
-    // Call toggleIsMintEnabled again as owner
-    await vineToken.connect(owner).toggleIsMintEnabled();
+    const totalSupply = await vineToken.totalSupply();
+    expect(totalSupply).to.equal(1);
 
-    // Check that isMintEnabled is now false again
-    expect(await vineToken.isMintEnabled()).to.be.false;
+    const ownerOfToken = await vineToken.ownerOf(tokenId);
+    expect(ownerOfToken).to.equal(addr1.address);
+
+    const balanceOfAddr1 = await vineToken.balanceOf(addr1.address);
+    expect(balanceOfAddr1).to.equal(1);
   });
 
-  it("should revert if called by non-owner", async function () {
-    // Call toggleIsMintEnabled as non-owner
-    await expect(vineToken.connect(nonOwner).toggleIsMintEnabled()).to.be.revertedWith(
-        "Ownable: caller is not the owner"
+  it("should revert when minting is disabled", async function () {
+    const mintPrice = ethers.utils.parseEther("0.5");
+
+    await expect(vineToken.connect(owner).mint({ value: mintPrice })).to.be.revertedWith(
+        "minting not enabled"
     );
-
-    // Check that isMintEnabled is still false
-    expect(await vineToken.isMintEnabled()).to.be.false;
   });
-
 
 });

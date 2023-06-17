@@ -1,9 +1,7 @@
-
 const hre = require("hardhat");
 
 async function main() {
 
-    // We get the contract to deploy
     const VineToken = await hre.ethers.getContractFactory("VineToken");
     const vineToken = await VineToken.deploy();
 
@@ -18,3 +16,5 @@ main()
         console.error(error);
         process.exit(1);
     });
+
+
