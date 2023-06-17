@@ -30,7 +30,7 @@ contract VineToken is ERC721, Ownable, ERC721Burnable {
         return maxSupply;
     }
     function mint() external payable returns (uint256){
-        //        require(isMintEnabled, 'minting not enabled');
+        require(isMintEnabled, 'minting not enabled');
         require(mintedWallets[msg.sender] < 1, 'exceeds max per wallet');
         require(msg.value == mintPrice, 'wrong value');
         require(maxSupply > totalSupply, 'sold out');
