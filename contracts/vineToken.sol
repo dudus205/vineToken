@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 
 contract VineToken is ERC721, Ownable, ERC721Burnable {
-    uint256 public mintPrice = 0.5 ether; //50000000000000000 Wei = 0.05
+    uint256 public mintPrice = 0.5 ether;
     uint256 public totalSupply;
     uint256 public maxSupply;
     bool public isMintEnabled;
@@ -44,3 +44,6 @@ contract VineToken is ERC721, Ownable, ERC721Burnable {
     }
 
 }
+
+
+
