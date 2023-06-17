@@ -13,7 +13,6 @@ const signer = provider.getSigner();
 
 // get the smart contract
 const contract = new ethers.Contract(contractAddress, VineToken.abi, signer);
-const maxSupply = 3;
 
 function Home() {
 
@@ -38,7 +37,6 @@ function Home() {
                 <div className="row">
                     {Array(totalMinted +1)
                         .fill(0)
-                        .slice(0, maxSupply)
                         .map((_, i) => (
                             <div key={i} className="col-sm">
                                 <NFTImage tokenId={i} getCount={getCount} />
@@ -51,15 +49,7 @@ function Home() {
 }
 
 function NFTImage({ tokenId, getCount }) {
-    // const contentId = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
-    // const metadataURI = `${contentId}/${tokenId}.json`;
-    // const imageURI = `https://gateway.pinata.cloud/ipfs/${contentId}/${tokenId}.png`;
-    const imageURI = `img/${tokenId}.png`;
-
     const [isMinted, setIsMinted] = useState(false);
-    useEffect(() => {
-        // getMintedStatus();
-    }, [isMinted]);
 
     const mintToken = async () => {
         const connection = contract.connect(signer);
@@ -67,13 +57,15 @@ function NFTImage({ tokenId, getCount }) {
         const result = await contract.mint({
             value: ethers.utils.parseEther('0.5'),
         });
-
-        const response = await result.wait();
-        // console.log(response)
-        // getMintedStatus(tokenId);
-        getCount();
-        setIsMinted(tokenId);
-
+        try {
+            await result.wait();
+            getCount();
+            setIsMinted(tokenId + 1);
+            console.log(tokenId)
+        }
+        catch(error){
+            alert("You cannot mint more tokens!");
+        }
     };
 
     async function getID() {
@@ -81,7 +73,6 @@ function NFTImage({ tokenId, getCount }) {
     }
     return (
         <div className="card" style={{ width: '18rem' }}>
-            {/*<img className="card-img-top" src={isMinted ? imageURI : 'img/placeholder.png'}></img>*/}
             <div className="card-body">
                 <h5 className="card-title">ID #{tokenId}</h5>
                 {!isMinted ? (
